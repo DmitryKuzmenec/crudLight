@@ -3,6 +3,7 @@ package store
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/sqlite3"
@@ -12,6 +13,7 @@ import (
 )
 
 type DB struct {
+	dbPath string
 	*sql.DB
 }
 
@@ -21,7 +23,7 @@ func New(dbPath string) (*DB, error) {
 		return nil, fmt.Errorf("open sqlite DB failed: %w", err)
 	}
 
-	return &DB{sqliteDb}, nil
+	return &DB{dbPath, sqliteDb}, nil
 }
 
 // Migrate launches migrations
@@ -38,8 +40,15 @@ func (db *DB) Migrate() error {
 
 	m, err := migrate.NewWithInstance("file", f, "crud_light", driver)
 	if err != nil {
-		return fmt.Errorf("migration failed: %w", err)
+		return err
 	}
+	m.Up()
 
-	return m.Steps(1)
+	return nil
+}
+
+// Clean closes connection and removes file of database
+func (db *DB) Clean() error {
+	db.Close()
+	return os.Remove(db.dbPath)
 }

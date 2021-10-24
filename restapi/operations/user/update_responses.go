@@ -9,6 +9,8 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime"
+
+	"github.com/DmitryKuzmenec/crudLight/models"
 )
 
 // UpdateOKCode is the HTTP code returned for type UpdateOK
@@ -43,6 +45,11 @@ const UpdateInternalServerErrorCode int = 500
 swagger:response updateInternalServerError
 */
 type UpdateInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.Error `json:"body,omitempty"`
 }
 
 // NewUpdateInternalServerError creates UpdateInternalServerError with default headers values
@@ -51,10 +58,25 @@ func NewUpdateInternalServerError() *UpdateInternalServerError {
 	return &UpdateInternalServerError{}
 }
 
+// WithPayload adds the payload to the update internal server error response
+func (o *UpdateInternalServerError) WithPayload(payload *models.Error) *UpdateInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the update internal server error response
+func (o *UpdateInternalServerError) SetPayload(payload *models.Error) {
+	o.Payload = payload
+}
+
 // WriteResponse to the client
 func (o *UpdateInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
 	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }

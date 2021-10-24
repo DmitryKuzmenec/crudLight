@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"os"
 
 	"github.com/DmitryKuzmenec/crudLight/handlers"
@@ -11,19 +11,26 @@ import (
 	"github.com/DmitryKuzmenec/crudLight/store"
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
+	"go.uber.org/zap"
 )
 
 const DBPath = "./store.db"
 
 func main() {
+
+	log, _ := zap.NewProduction()
+	defer log.Sync()
+
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
-		log.Fatalln(err)
+		log.Panic(err.Error())
 	}
 
 	api := operations.NewCrudLightAPI(swaggerSpec)
 	server := restapi.NewServer(api)
 	defer server.Shutdown()
+
+	api.Logger = log.Sugar().Infof
 
 	parser := flags.NewParser(server, flags.Default)
 	parser.ShortDescription = "API crudLight"
@@ -32,7 +39,7 @@ func main() {
 	for _, optsGroup := range api.CommandLineOptionsGroups {
 		_, err := parser.AddGroup(optsGroup.ShortDescription, optsGroup.LongDescription, optsGroup.Options)
 		if err != nil {
-			log.Fatalln(err)
+			log.Panic(err.Error())
 		}
 	}
 
@@ -46,29 +53,30 @@ func main() {
 		os.Exit(code)
 	}
 
-	// Initial database
+	// initialize database
 	db, err := store.New(DBPath)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(fmt.Sprintf("database initializing failed: %s", err))
 	}
+	defer db.Close()
 
 	// Do migrations
 	if err := db.Migrate(); err != nil {
-		log.Fatal(err)
+		log.Panic(fmt.Sprintf("database migration failed: %s", err))
 	}
 
-	// initial user repo
+	// initialize user repo
 	userRepo := repository.NewUserAPI(db)
 
-	// initial handlers
-	api.UserGetHandler = handlers.UserGet(userRepo)
-	api.UserCreateHandler = handlers.UserCreate(userRepo)
-	api.UserUpdateHandler = handlers.UserUpdate(userRepo)
-	api.UserDeleteHandler = handlers.UserDelete(userRepo)
+	// initialize handlers
+	api.UserGetHandler = handlers.UserGet(userRepo, log)
+	api.UserCreateHandler = handlers.UserCreate(userRepo, log)
+	api.UserUpdateHandler = handlers.UserUpdate(userRepo, log)
+	api.UserDeleteHandler = handlers.UserDelete(userRepo, log)
 
 	server.ConfigureAPI()
 
 	if err := server.Serve(); err != nil {
-		log.Fatalln(err)
+		log.Panic(err.Error())
 	}
 }

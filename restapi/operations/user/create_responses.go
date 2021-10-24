@@ -65,6 +65,11 @@ const CreateBadRequestCode int = 400
 swagger:response createBadRequest
 */
 type CreateBadRequest struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.Error `json:"body,omitempty"`
 }
 
 // NewCreateBadRequest creates CreateBadRequest with default headers values
@@ -73,12 +78,27 @@ func NewCreateBadRequest() *CreateBadRequest {
 	return &CreateBadRequest{}
 }
 
+// WithPayload adds the payload to the create bad request response
+func (o *CreateBadRequest) WithPayload(payload *models.Error) *CreateBadRequest {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the create bad request response
+func (o *CreateBadRequest) SetPayload(payload *models.Error) {
+	o.Payload = payload
+}
+
 // WriteResponse to the client
 func (o *CreateBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
 	rw.WriteHeader(400)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }
 
 // CreateInternalServerErrorCode is the HTTP code returned for type CreateInternalServerError
@@ -89,6 +109,11 @@ const CreateInternalServerErrorCode int = 500
 swagger:response createInternalServerError
 */
 type CreateInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.Error `json:"body,omitempty"`
 }
 
 // NewCreateInternalServerError creates CreateInternalServerError with default headers values
@@ -97,10 +122,25 @@ func NewCreateInternalServerError() *CreateInternalServerError {
 	return &CreateInternalServerError{}
 }
 
+// WithPayload adds the payload to the create internal server error response
+func (o *CreateInternalServerError) WithPayload(payload *models.Error) *CreateInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the create internal server error response
+func (o *CreateInternalServerError) SetPayload(payload *models.Error) {
+	o.Payload = payload
+}
+
 // WriteResponse to the client
 func (o *CreateInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
 	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }

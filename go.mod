@@ -14,5 +14,7 @@ require (
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/mattes/migrate v3.0.1+incompatible
 	github.com/mattn/go-sqlite3 v1.14.9
+	github.com/stretchr/testify v1.7.0
+	go.uber.org/zap v1.19.1
 	golang.org/x/net v0.0.0-20211020060615-d418f374d309
 )

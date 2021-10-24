@@ -55,10 +55,16 @@ func init() {
             }
           },
           "400": {
-            "description": "Bad request"
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -81,7 +87,10 @@ func init() {
             }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -96,7 +105,10 @@ func init() {
             "description": "OK"
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -123,7 +135,10 @@ func init() {
             "description": "OK"
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -139,6 +154,18 @@ func init() {
     }
   },
   "definitions": {
+    "Error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "User": {
       "type": "object",
       "properties": {
@@ -194,10 +221,16 @@ func init() {
             }
           },
           "400": {
-            "description": "Bad request"
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -220,7 +253,10 @@ func init() {
             }
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -235,7 +271,10 @@ func init() {
             "description": "OK"
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -262,7 +301,10 @@ func init() {
             "description": "OK"
           },
           "500": {
-            "description": "Server error"
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -278,6 +320,18 @@ func init() {
     }
   },
   "definitions": {
+    "Error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "User": {
       "type": "object",
       "properties": {

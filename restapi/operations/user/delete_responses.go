@@ -9,6 +9,8 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime"
+
+	"github.com/DmitryKuzmenec/crudLight/models"
 )
 
 // DeleteOKCode is the HTTP code returned for type DeleteOK
@@ -43,6 +45,11 @@ const DeleteInternalServerErrorCode int = 500
 swagger:response deleteInternalServerError
 */
 type DeleteInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.Error `json:"body,omitempty"`
 }
 
 // NewDeleteInternalServerError creates DeleteInternalServerError with default headers values
@@ -51,10 +58,25 @@ func NewDeleteInternalServerError() *DeleteInternalServerError {
 	return &DeleteInternalServerError{}
 }
 
+// WithPayload adds the payload to the delete internal server error response
+func (o *DeleteInternalServerError) WithPayload(payload *models.Error) *DeleteInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the delete internal server error response
+func (o *DeleteInternalServerError) SetPayload(payload *models.Error) {
+	o.Payload = payload
+}
+
 // WriteResponse to the client
 func (o *DeleteInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
 	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }
